@@ -6,7 +6,7 @@ on:
 permissions:
   contents: write
 jobs:
-  musl-wheel:
+  musl-binary:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -19,22 +19,20 @@ jobs:
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: x86_64-unknown-linux-musl
-      - uses: astral-sh/setup-uv@v7
-        with:
-          version: "0.12.0"
-      - name: Build static musl wheel
-        run: uv build --wheel
-      - name: Verify the shipped binary is static
+      - name: Build static musl binary
+        env:
+          CC_x86_64_unknown_linux_musl: musl-gcc
+        run: cargo build --release --target x86_64-unknown-linux-musl -p scb-check
+      - name: Stage release assets
         run: |
-          uv venv /tmp/verify
-          uv pip install --python /tmp/verify/bin/python dist/*.whl
-          ldd /tmp/verify/bin/scb-check 2>&1 | grep -qE "statically linked|not a dynamic executable"
-      - name: Publish wheel to the release
+          mkdir -p out
+          cp target/x86_64-unknown-linux-musl/release/scb-check out/scb-check-x86_64-unknown-linux-musl
+          ldd out/scb-check-x86_64-unknown-linux-musl 2>&1 | grep -qE "statically linked|not a dynamic executable"
+          (cd out && sha256sum scb-check-x86_64-unknown-linux-musl > scb-check-x86_64-unknown-linux-musl.sha256)
+      - name: Publish binary to the release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          wheel=$(ls dist/*.whl)
-          sha256sum "$wheel" | tee "$wheel.sha256"
           tag="${{ github.ref_name }}"
-          gh release create "$tag" --title "$tag" --generate-notes "$wheel" "$wheel.sha256" \
-            || gh release upload "$tag" "$wheel" "$wheel.sha256" --clobber
+          gh release create "$tag" --title "$tag" --generate-notes out/* \
+            || gh release upload "$tag" out/* --clobber

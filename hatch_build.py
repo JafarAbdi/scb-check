@@ -1,70 +1,75 @@
 """Build hook that packages the fully-static musl `scb-check` binary.
 
-The binary is statically linked against musl (no libc dependency), so it runs
-on any Linux distribution regardless of glibc version. The wheel is therefore
-tagged `manylinux2014` (glibc 2.17) purely as the broadest tag pip will accept;
-the binary itself has no glibc floor.
+The binary is fetched from this project's GitHub release matching the package
+version and host architecture, so installing the pre-commit hook needs no Rust
+toolchain. A locally cargo-built binary is used instead when present (dev/CI).
+The binary is statically linked against musl, so it runs on any Linux distro;
+the `manylinux2014` wheel tag is only the broadest tag pip accepts.
 """
 
 from __future__ import annotations
 
-import os
+import hashlib
 import platform
-import shutil
-import subprocess
+import stat
+import urllib.request
 from pathlib import Path
 from typing import Any
 
 from hatchling.builders.hooks.plugin.interface import BuildHookInterface
 
+_REPO = "JafarAbdi/scb-check"
+
 # Linux-only for now; extend this map to add platforms.
-_MUSL_TARGETS = {
+_TARGETS = {
     "x86_64": ("x86_64-unknown-linux-musl", "manylinux2014_x86_64"),
     "aarch64": ("aarch64-unknown-linux-musl", "manylinux2014_aarch64"),
 }
 
 
 class CustomBuildHook(BuildHookInterface):
-    """Build the static musl Rust CLI and include it in the wheel."""
+    """Package the static musl binary into the wheel."""
 
     def initialize(self, version: str, build_data: dict[str, Any]) -> None:
-        """Cross-build the static binary before wheel assembly."""
-        _ = version
+        """Provide the static binary (local build or release download)."""
         if self.target_name != "wheel":
             return
 
         arch = platform.machine()
-        if arch not in _MUSL_TARGETS:
-            msg = f"unsupported architecture {arch!r}; supported: {sorted(_MUSL_TARGETS)}"
+        if arch not in _TARGETS:
+            msg = f"unsupported architecture {arch!r}; supported: {sorted(_TARGETS)}"
             raise RuntimeError(msg)
-        triple, wheel_platform = _MUSL_TARGETS[arch]
+        triple, wheel_platform = _TARGETS[arch]
 
         build_data["pure_python"] = False
         build_data["infer_tag"] = False
         build_data["tag"] = f"py3-none-{wheel_platform}"
 
         root = Path(self.root)
-        cargo = shutil.which("cargo")
-        if cargo is None:
-            msg = "cargo is required to build the scb-check wheel"
-            raise RuntimeError(msg)
-
-        env = dict(os.environ)
-        # tree-sitter's C sources need a musl C compiler for the musl target.
-        env.setdefault(
-            f"CC_{triple.replace('-', '_')}",
-            "musl-gcc" if arch == "x86_64" else f"{arch}-linux-musl-gcc",
+        local = root / "target" / triple / "release" / "scb-check"
+        staged = root / "build" / "bin" / "scb-check"
+        staged.parent.mkdir(parents=True, exist_ok=True)
+        if local.is_file():
+            staged.write_bytes(local.read_bytes())
+        else:
+            _download_release_binary(version, triple, staged)
+        staged.chmod(
+            staged.stat().st_mode | stat.S_IEXEC | stat.S_IXGRP | stat.S_IXOTH
         )
-        subprocess.run(  # noqa: S603
-            [cargo, "build", "--release", "--target", triple, "-p", "scb-check"],
-            cwd=root,
-            check=True,
-            env=env,
-        )
+        build_data.setdefault("shared_scripts", {})[str(staged)] = "scb-check"
 
-        binary = root / "target" / triple / "release" / "scb-check"
-        if not binary.is_file():
-            msg = f"expected built binary at {binary}"
-            raise RuntimeError(msg)
-        shared_scripts = build_data.setdefault("shared_scripts", {})
-        shared_scripts[str(binary)] = "scb-check"
+
+def _download_release_binary(version: str, triple: str, dest: Path) -> None:
+    url = f"https://github.com/{_REPO}/releases/download/v{version}/scb-check-{triple}"
+    binary = _fetch(url)
+    expected = _fetch(f"{url}.sha256").split()[0].decode()
+    actual = hashlib.sha256(binary).hexdigest()
+    if actual != expected:
+        msg = f"sha256 mismatch for {url}: got {actual}, expected {expected}"
+        raise RuntimeError(msg)
+    dest.write_bytes(binary)
+
+
+def _fetch(url: str) -> bytes:
+    with urllib.request.urlopen(url) as response:  # noqa: S310
+        return response.read()
