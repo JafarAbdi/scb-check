@@ -224,6 +224,17 @@ metadata:
 rule:
   pattern: "$S.replace($P, $EMPTY) if $S.startswith($P) else $S"
 ---
+id: section-banner-comment
+language: python
+severity: info
+message: Decorative section banner comment - delete, let structure speak for itself
+metadata:
+  weight: 1
+  category: slop
+rule:
+  kind: comment
+  regex: "^#\\s*[-=─]{10,}\\s*$"
+---
 id: dataclass-count-explosion
 language: python
 severity: info
