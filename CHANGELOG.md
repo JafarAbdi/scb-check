@@ -8,10 +8,10 @@ This is a fork of gabeorlanski/scb-check (Apache-2.0). Modifications:
 
 - Added `--gate {all,findings}` to `check`; `findings` gates on ast-grep rules,
   clones, and structural findings but not high-complexity (erosion) functions.
-- Packaged a fully-static musl binary: the wheel build (`hatch_build.py`) uses a
-  local cargo build when present, else downloads the binary from the matching
-  GitHub release, so the bundled `.pre-commit-hooks.yaml` installs with no Rust
-  toolchain. Added a tag-triggered release workflow that publishes the binary.
+- Packaged a fully-static musl binary wheel (built from `packaging/`) and made
+  the repo root a pre-commit shim (`scb-check-hook`) that depends on that release
+  wheel, so `.pre-commit-hooks.yaml` installs with no Rust toolchain and needs no
+  separate mirror repo. Added a tag-triggered release workflow.
 
 ## [0.2.0] - 2026-05-19
 

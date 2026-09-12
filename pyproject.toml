@@ -1,19 +1,26 @@
 [build-system]
-requires = ["hatchling==1.27.0", "packaging==26.1"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
 
+# Root package = the pre-commit hook shim. It installs with no Rust toolchain by
+# depending on the static musl `scb-check` wheel published to this repo's GitHub
+# release (built from packaging/). The actual CLI lives in crates/scb-check.
 [project]
-name = "scb-check"
+name = "scb-check-hook"
 version = "0.2.0"
-description = "CLI for measuring verbosity and erosion metrics in supported source codebases"
+description = "pre-commit hook wrapping the scb-check static musl binary."
 readme = "README.md"
-license = "MIT"
-requires-python = ">=3.12"
-dependencies = []
+license = "Apache-2.0"
+requires-python = ">=3.8"
+dependencies = [
+    "scb-check @ https://github.com/JafarAbdi/scb-check/releases/download/v0.2.0/scb_check-0.2.0-py3-none-manylinux2014_x86_64.whl",
+]
 
 [project.urls]
-Repository = "https://github.com/gabeorlanski/scb-check"
-Issues = "https://github.com/gabeorlanski/scb-check/issues"
+Repository = "https://github.com/JafarAbdi/scb-check"
+
+[tool.setuptools]
+py-modules = []
 
 [dependency-groups]
 dev = [
@@ -23,11 +30,6 @@ dev = [
     "ty==0.0.32",
     "vulture==2.16",
 ]
-
-[tool.hatch.build.targets.wheel]
-only-include = ["README.md"]
-
-[tool.hatch.build.hooks.custom]
 
 [tool.ty.src]
 exclude = ["tests/fixtures/"]
@@ -76,7 +78,7 @@ ignore = [
 convention = "google"  # Options: "google", "numpy", or "pep257"
 
 [tool.vulture]
-paths = ["hatch_build.py"]
+paths = ["packaging/hatch_build.py"]
 min_confidence = 80
 exclude = [
     ".venv",

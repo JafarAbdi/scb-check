@@ -1,0 +1,20 @@
+[build-system]
+requires = ["hatchling==1.27.0", "packaging==26.1"]
+build-backend = "hatchling.build"
+
+[project]
+name = "scb-check"
+version = "0.2.0"
+description = "Verbosity/erosion + slop-rule CLI, shipped as a static musl binary."
+readme = "README.md"
+license = "Apache-2.0"
+requires-python = ">=3.8"
+dependencies = []
+
+[project.urls]
+Repository = "https://github.com/JafarAbdi/scb-check"
+
+[tool.hatch.build.targets.wheel]
+only-include = ["README.md"]
+
+[tool.hatch.build.hooks.custom]
