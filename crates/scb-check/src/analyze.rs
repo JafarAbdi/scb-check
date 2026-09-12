@@ -102,6 +102,7 @@ pub fn analyze(
     disable_sg: bool,
     include_all: bool,
     low_use_short_function: &LowUseShortFunctionSettings,
+    disable_rules: &[String],
 ) -> Result<Report, AnalyzeError> {
     let ast_grep_catalog = AstGrepCatalog::load()?;
     let valid_rule_ids = valid_rule_ids(&ast_grep_catalog)?;
@@ -131,6 +132,11 @@ pub fn analyze(
         ast_grep_findings = apply_threshold_map(ast_grep_findings, &ast_grep_catalog.thresholds());
         structural_findings =
             filter_structural_findings(structural_findings, &project.ignore_directives);
+    }
+    if !disable_rules.is_empty() {
+        ast_grep_findings.retain(|finding| !disable_rules.contains(&finding.rule_id));
+        structural_findings
+            .retain(|finding| !disable_rules.iter().any(|id| id == finding.rule_id));
     }
     let line_summary = line_summary(
         &clones,

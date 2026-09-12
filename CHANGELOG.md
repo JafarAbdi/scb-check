@@ -8,6 +8,8 @@ This is a fork of gabeorlanski/scb-check (Apache-2.0). Modifications:
 
 - Added `--gate {all,findings}` to `check`; `findings` gates on ast-grep rules,
   clones, and structural findings but not high-complexity (erosion) functions.
+- Added a `disable-rules` config key (scb-check.toml / `[tool.scb-check]`) that
+  drops matching ast-grep and structural findings from both output and gating.
 - Packaged a fully-static musl binary wheel (built from `packaging/`) and made
   the repo root a pre-commit shim (`scb-check-hook`) that depends on that release
   wheel, so `.pre-commit-hooks.yaml` installs with no Rust toolchain and needs no

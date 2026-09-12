@@ -131,6 +131,7 @@ fn run_check(options: &CheckOptions) -> Result<ExitCode, CliError> {
         options.disable_sg,
         options.include_all,
         &config.low_use_short_function,
+        &config.disable_rules,
     )?;
     log_info(
         options.verbosity,
@@ -267,6 +268,7 @@ mod test_support {
             disable_sg,
             include_all,
             &config.low_use_short_function,
+            &config.disable_rules,
         )?)
     }
 }

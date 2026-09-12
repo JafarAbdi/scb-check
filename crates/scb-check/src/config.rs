@@ -17,6 +17,7 @@ const DEFAULT_MAX_INLINE_CALL_NESTING: usize = 3;
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Config {
     pub exclude: Vec<String>,
+    pub disable_rules: Vec<String>,
     pub base_dir: PathBuf,
     pub context_lines: usize,
     pub low_use_short_function: LowUseShortFunctionSettings,
@@ -74,6 +75,7 @@ pub enum ConfigError {
 #[serde(default, rename_all = "kebab-case", deny_unknown_fields)]
 struct RawScbConfig {
     exclude: Vec<String>,
+    disable_rules: Vec<String>,
     context: usize,
     low_use_short_function: RawLowUseShortFunctionSettings,
 }
@@ -94,6 +96,7 @@ impl Default for RawScbConfig {
     fn default() -> Self {
         Self {
             exclude: Vec::new(),
+            disable_rules: Vec::new(),
             context: DEFAULT_CONTEXT_LINES,
             low_use_short_function: RawLowUseShortFunctionSettings::default(),
         }
@@ -142,6 +145,7 @@ impl Config {
     pub fn default_for(cwd: &Path) -> Self {
         Self {
             exclude: Vec::new(),
+            disable_rules: Vec::new(),
             base_dir: cwd.to_path_buf(),
             context_lines: DEFAULT_CONTEXT_LINES,
             low_use_short_function: LowUseShortFunctionSettings::default(),
@@ -247,6 +251,7 @@ fn parse_pyproject_config(
     } else {
         Ok(Config {
             exclude: Vec::new(),
+            disable_rules: Vec::new(),
             base_dir,
             context_lines: DEFAULT_CONTEXT_LINES,
             low_use_short_function: LowUseShortFunctionSettings::default(),
@@ -264,6 +269,7 @@ fn parse_scb_config(path: &Path, value: Value, base_dir: PathBuf) -> Result<Conf
     let low_use_short_function = low_use_settings(&raw.low_use_short_function)?;
     Ok(Config {
         exclude: norm_patterns(raw.exclude),
+        disable_rules: raw.disable_rules,
         base_dir,
         context_lines: raw.context,
         low_use_short_function,

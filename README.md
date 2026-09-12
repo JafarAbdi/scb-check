@@ -91,6 +91,8 @@ enabled = true
 ```
 
 - `exclude`: list of glob patterns to skip while discovering supported source files.
+- `disable-rules`: list of ast-grep / structural rule ids to drop entirely; matching
+  findings are neither reported nor gated (e.g. `disable-rules = ["len-as-condition"]`).
 - `context`: number of surrounding source lines to show around human-readable ast-grep, structural rule, and erosion findings.
 - `low-use-short-function`: opt-in budgets for the short low-use helper rule. Set `enabled = true` to enable it, then tune `max-call-sites`, `max-function-sloc`, `max-inline-caller-sloc`, `max-inline-caller-complexity`, `max-inline-caller-cognitive-complexity`, and `max-inline-call-nesting`.
 
