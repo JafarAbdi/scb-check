@@ -2,6 +2,16 @@
 
 All notable user-facing changes to `scb-check` are documented here.
 
+## Fork changes (JafarAbdi/scb-check)
+
+This is a fork of gabeorlanski/scb-check (Apache-2.0). Modifications:
+
+- Added `--gate {all,findings}` to `check`; `findings` gates on ast-grep rules,
+  clones, and structural findings but not high-complexity (erosion) functions.
+- Removed the `section-banner-comment` rule (duplicated a downstream hook).
+- Retargeted the wheel build to a fully-static musl binary (`hatch_build.py`)
+  and added a tag-triggered release workflow plus a `.pre-commit-hooks.yaml`.
+
 ## [0.2.0] - 2026-05-19
 
 This release summarizes changes since `v0.1.0`.

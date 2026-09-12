@@ -332,6 +332,17 @@ impl Report {
             || self.high_cc_functions > 0
             || self.high_cog_functions > 0
     }
+
+    /// Slop findings only: ast-grep rules, clones, and structural rules.
+    /// Excludes high-complexity (erosion) functions so complexity can be
+    /// reported without gating a commit.
+    pub const fn has_slop_findings(&self) -> bool {
+        self.clone_loc > 0
+            || !self.clones.is_empty()
+            || self.ast_grep_flagged_loc > 0
+            || !self.ast_grep_findings.is_empty()
+            || !self.structural_findings.is_empty()
+    }
 }
 
 fn ratio(numerator: f64, denominator: f64) -> f64 {

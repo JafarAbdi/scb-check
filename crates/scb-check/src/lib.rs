@@ -15,7 +15,7 @@ mod walk;
 use std::process::ExitCode;
 
 use analyze::{AnalyzeError, analyze};
-use args::{CheckOptions, Command, ParseArgsError, parse_args};
+use args::{CheckOptions, Command, GateScope, ParseArgsError, parse_args};
 use astgrep::{AstGrepError, ast_grep_rule_document};
 use config::{ConfigError, load_config};
 use model::Report;
@@ -148,7 +148,7 @@ fn run_check(options: &CheckOptions) -> Result<ExitCode, CliError> {
     }
 
     render_report(&report, options, config.context_lines);
-    Ok(exit_code_for_report(&report))
+    Ok(exit_code_for_report(&report, options.gate))
 }
 
 fn log_info(verbosity: u8, message: std::fmt::Arguments<'_>) {
@@ -174,8 +174,12 @@ fn render_report(report: &Report, options: &CheckOptions, context_lines: usize) 
     }
 }
 
-fn exit_code_for_report(report: &Report) -> ExitCode {
-    if report.has_findings() {
+fn exit_code_for_report(report: &Report, gate: GateScope) -> ExitCode {
+    let gated = match gate {
+        GateScope::All => report.has_findings(),
+        GateScope::Findings => report.has_slop_findings(),
+    };
+    if gated {
         ExitCode::from(1)
     } else {
         ExitCode::SUCCESS

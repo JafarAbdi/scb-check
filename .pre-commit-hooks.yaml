@@ -1,0 +1,8 @@
+- id: scb-check
+  name: scb-check
+  description: Slop-rule + clone + structural gate (static musl binary shipped in the release wheel).
+  entry: scb-check check
+  language: python
+  pass_filenames: false
+  always_run: true
+  args: ["--gate", "findings", "."]

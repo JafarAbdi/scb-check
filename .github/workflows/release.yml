@@ -1,0 +1,40 @@
+name: release
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  musl-wheel:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install musl toolchain
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y musl-tools
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "0.12.0"
+      - name: Build static musl wheel
+        run: uv build --wheel
+      - name: Verify the shipped binary is static
+        run: |
+          uv venv /tmp/verify
+          uv pip install --python /tmp/verify/bin/python dist/*.whl
+          file /tmp/verify/bin/scb-check | grep -q "statically linked"
+      - name: Publish wheel to the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          wheel=$(ls dist/*.whl)
+          sha256sum "$wheel" | tee "$wheel.sha256"
+          tag="${{ github.ref_name }}"
+          gh release create "$tag" --title "$tag" --generate-notes "$wheel" "$wheel.sha256" \
+            || gh release upload "$tag" "$wheel" "$wheel.sha256" --clobber

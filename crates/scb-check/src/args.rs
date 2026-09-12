@@ -11,6 +11,18 @@ pub struct CheckOptions {
     pub min_duplicate_lines: Option<usize>,
     pub config_path: Option<PathBuf>,
     pub verbosity: u8,
+    pub gate: GateScope,
+}
+
+/// Which finding categories make `check` exit non-zero.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, Default)]
+pub enum GateScope {
+    /// Any finding fails, including high-complexity (erosion) functions.
+    #[default]
+    All,
+    /// Only slop findings fail: ast-grep rules, clones, and structural rules.
+    /// High cyclomatic/cognitive complexity is reported but does not gate.
+    Findings,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq)]
@@ -55,6 +67,8 @@ struct RawCheckOptions {
     min_duplicate_lines: Option<usize>,
     #[arg(short = 'v', long = "verbosity", action = ArgAction::Count)]
     verbosity: u8,
+    #[arg(long = "gate", value_enum, default_value_t = GateScope::All)]
+    gate: GateScope,
     path: PathBuf,
 }
 
@@ -110,6 +124,7 @@ impl From<RawCheckOptions> for CheckOptions {
             min_duplicate_lines: raw.min_duplicate_lines,
             config_path: raw.config_path,
             verbosity: raw.verbosity,
+            gate: raw.gate,
         }
     }
 }
