@@ -1,7 +1,7 @@
 ---
 id: comprehension-used-but-ignored-result
 language: python
-severity: warning
+severity: error
 message: "Comprehension result discarded - use a `for` loop for side effects"
 metadata:
   weight: 5
@@ -17,7 +17,7 @@ rule:
 ---
 id: for-range-len
 language: python
-severity: warning
+severity: error
 message: "`for i in range(len(x))` - use `enumerate(x)` or iterate `x` directly"
 metadata:
   weight: 5
@@ -27,7 +27,7 @@ rule:
 ---
 id: unnecessary-list-call
 language: python
-severity: warning
+severity: error
 message: "`for x in list(iterable)` - drop `list()`, `for` iterates directly"
 metadata:
   weight: 5
@@ -42,7 +42,7 @@ rule:
 ---
 id: list-map-filter
 language: python
-severity: info
+severity: error
 message: "`list(map(f, xs))` / `list(filter(p, xs))` - use a list comprehension"
 metadata:
   weight: 1
@@ -63,7 +63,7 @@ rule:
 ---
 id: listcomp-in-builtin-call
 language: python
-severity: warning
+severity: error
 message: "`all/any/sum/set/dict([...])` - drop brackets for a generator expression"
 metadata:
   weight: 5
@@ -81,7 +81,7 @@ rule:
 ---
 id: membership-test-list-literal
 language: python
-severity: info
+severity: error
 message: "`x in [a, b, c, d]` - use a set literal `{a, b, c, d}` for O(1) lookup"
 metadata:
   weight: 1
@@ -92,7 +92,7 @@ rule:
 ---
 id: list-wrap-list
 language: python
-severity: warning
+severity: error
 message: "`list([a, b, c])` is redundant - just use `[a, b, c]`"
 metadata:
   weight: 5
@@ -102,7 +102,7 @@ rule:
 ---
 id: set-literal-list
 language: python
-severity: warning
+severity: error
 message: "`set([a, b, c])` - use set literal `{a, b, c}`"
 metadata:
   weight: 5
@@ -120,7 +120,7 @@ rule:
 ---
 id: list-self-concat
 language: python
-severity: warning
+severity: error
 message: "`lst = lst + [x]` - use `lst.append(x)` (avoids copying the whole list)"
 metadata:
   weight: 5
@@ -130,7 +130,7 @@ rule:
 ---
 id: list-extend-from-loop
 language: python
-severity: warning
+severity: error
 message: "`for x in it: lst.append(x)` - use `lst.extend(it)`"
 metadata:
   weight: 5
@@ -141,7 +141,7 @@ rule:
 ---
 id: join-list-literal
 language: python
-severity: warning
+severity: error
 message: "`''.join([...])` materializes a list first - pass the iterable directly"
 metadata:
   weight: 5
@@ -159,7 +159,7 @@ rule:
 ---
 id: join-list-comprehension
 language: python
-severity: warning
+severity: error
 message: "`''.join([x for ...])` - drop brackets for a generator expression"
 metadata:
   weight: 5
@@ -177,7 +177,7 @@ rule:
 ---
 id: manual-sum-loop
 language: python
-severity: info
+severity: error
 message: "`total = 0; for x in it: total += expr` - use `sum(expr for x in it)`"
 metadata:
   weight: 1
@@ -194,7 +194,7 @@ rule:
 ---
 id: manual-count-loop
 language: python
-severity: info
+severity: error
 message: "`count = 0; for x in it: count += 1` - use `sum(1 for x in it if cond)`"
 metadata:
   weight: 1
@@ -211,7 +211,7 @@ rule:
 ---
 id: set-add-loop
 language: python
-severity: info
+severity: error
 message: "`for x in it: s.add(v)` - use set comprehension `{v for x in it}`"
 metadata:
   weight: 1
@@ -222,7 +222,7 @@ rule:
 ---
 id: sorted-list-comprehension-wrap
 language: python
-severity: warning
+severity: error
 message: "`sorted([x for ...])` - drop brackets for generator expression `sorted(x for ...)`"
 metadata:
   weight: 5
@@ -234,7 +234,7 @@ rule:
 ---
 id: set-generator-wrap
 language: python
-severity: warning
+severity: error
 message: "`set(x for x in it)` - use set comprehension `{x for x in it}`"
 metadata:
   weight: 5
@@ -246,7 +246,7 @@ rule:
 ---
 id: redundant-list-comprehension
 language: python
-severity: warning
+severity: error
 message: "`[x for x in iter]` - use `list(iter)`"
 metadata:
   weight: 5
@@ -257,7 +257,7 @@ rule:
 ---
 id: consecutive-append-calls
 language: python
-severity: info
+severity: error
 message: "Consecutive `.append()` calls - use `.extend([a, b, c])`"
 metadata:
   weight: 1
@@ -280,7 +280,7 @@ rule:
 ---
 id: verbose-list-append-loop
 language: python
-severity: info
+severity: error
 message: "Single-statement append loop - use `[expr for ... in ...]` comprehension"
 metadata:
   weight: 1
@@ -302,7 +302,7 @@ rule:
 ---
 id: init-populate-iterate-list
 language: python
-severity: info
+severity: error
 message: "Create-append-iterate `$LIST` - use `[expr for ...]` or skip the intermediate list"
 note: 'Consider refactoring to:
 
@@ -386,7 +386,7 @@ rule:
 ---
 id: materialize-then-sort-return
 language: python
-severity: info
+severity: error
 message: "`tmp = [...]; return sorted(tmp)` - use `return sorted(x for ... in ...)`"
 metadata:
   weight: 1
@@ -405,7 +405,7 @@ rule:
 ---
 id: manual-find-return-none
 language: python
-severity: info
+severity: error
 message: "`for x in it: if c: return r; return None` - use `next((r for x in it if c), None)`"
 metadata:
   weight: 1
@@ -423,7 +423,7 @@ rule:
 ---
 id: verbose-missing-remove-loop
 language: python
-severity: info
+severity: error
 message: "Copy-list-then-remove to find missing items - use `set(required) - set(target)`"
 metadata:
   weight: 1
@@ -439,7 +439,7 @@ rule:
 ---
 id: frozenset-list-wrap
 language: python
-severity: warning
+severity: error
 message: "`frozenset([...])` - pass the iterable directly, drop the list"
 metadata:
   weight: 5
@@ -459,7 +459,7 @@ rule:
 ---
 id: verbose-range-zero-start
 language: python
-severity: warning
+severity: error
 message: "`range(0, n)` - use `range(n)`, `0` is the default start"
 metadata:
   weight: 5
@@ -469,7 +469,7 @@ rule:
 ---
 id: verbose-sorted-list
 language: python
-severity: warning
+severity: error
 message: "`sorted(list(x))` - use `sorted(x)`, it already returns a new list"
 metadata:
   weight: 5
@@ -479,7 +479,7 @@ rule:
 ---
 id: redundant-continue
 language: python
-severity: warning
+severity: error
 message: "`continue` at end of loop body - delete it, the loop iterates anyway"
 metadata:
   weight: 5
@@ -494,7 +494,7 @@ rule:
 ---
 id: long-tuple-unpacking
 language: python
-severity: info
+severity: error
 message: "Unpacking 5+ values from a tuple - use a `NamedTuple` or `@dataclass`"
 metadata:
   weight: 1
@@ -509,7 +509,7 @@ rule:
 ---
 id: manual-index-unpack
 language: python
-severity: warning
+severity: error
 message: "`a = pair[0]; b = pair[1]` - use tuple unpacking `a, b = pair`"
 metadata:
   weight: 5
@@ -528,7 +528,7 @@ rule:
 ---
 id: split-magic-index
 language: python
-severity: info
+severity: error
 message: "`s.split()[N]` with magic index - unpack into named vars (`a, b, c = s.split()`)"
 metadata:
   weight: 1
@@ -547,7 +547,7 @@ rule:
 ---
 id: slice-assign-listcomp-self
 language: python
-severity: info
+severity: error
 message: "`lst[:] = [.. for .. in lst]` mutates a list while reading it - prefer assigning a new list unless in-place mutation is required"
 metadata:
   weight: 1
@@ -559,7 +559,7 @@ rule:
 ---
 id: redundant-blank-check
 language: python
-severity: info
+severity: error
 message: "`line.isspace() or not line` then `line.strip()` `if not text` - one `if not line.strip(): continue` is enough"
 metadata:
   weight: 1
@@ -584,7 +584,7 @@ rule:
 ---
 id: manual-set-union-loop
 language: python
-severity: info
+severity: error
 message: "`s = set(); for r in it: s.update(r.X())` - use `set().union(*(r.X() for r in it))` or a comprehension"
 metadata:
   weight: 1
@@ -603,7 +603,7 @@ rule:
 ---
 id: fixed-chunk-file-hash
 language: python
-severity: warning
+severity: error
 message: "`while True: chunk = f.read(N); if not chunk: break; h.update(chunk)` - use `hashlib.file_digest(f, ALGO)`"
 metadata:
   weight: 5

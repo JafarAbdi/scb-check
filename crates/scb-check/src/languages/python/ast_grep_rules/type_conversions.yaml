@@ -1,7 +1,7 @@
 ---
 id: manual-str-join
 language: python
-severity: warning
+severity: error
 message: "building a string with `+=` in a loop - collect parts in a list then `''.join(parts)`"
 metadata:
   weight: 5
@@ -25,7 +25,7 @@ rule:
 ---
 id: json-dumps-then-loads
 language: python
-severity: warning
+severity: error
 message: "`json.loads(json.dumps(x))` - use `copy.deepcopy(x)`"
 metadata:
   weight: 5
@@ -35,7 +35,7 @@ rule:
 ---
 id: json-loads-read
 language: python
-severity: warning
+severity: error
 message: "`json.loads(f.read())` - use `json.load(f)`"
 metadata:
   weight: 5
@@ -46,7 +46,7 @@ rule:
 ---
 id: int-float-coerce
 language: python
-severity: warning
+severity: error
 message: "`int(float(x))` - parse once or validate input format (mis-handles strings like `'1e2'`)"
 metadata:
   weight: 5
@@ -57,7 +57,7 @@ rule:
 ---
 id: unnecessary-cast-str
 language: python
-severity: warning
+severity: error
 message: "`str('x')` - string literal is already a string"
 metadata:
   weight: 5
@@ -75,7 +75,7 @@ rule:
 ---
 id: redundant-str-in-fstring
 language: python
-severity: warning
+severity: error
 message: "`f'{str(x)}'` - use `f'{x}'`, f-strings auto-convert"
 metadata:
   weight: 5
@@ -88,7 +88,7 @@ rule:
 ---
 id: verbose-type-conversion-chain
 language: python
-severity: warning
+severity: error
 message: "Chained type conversions like `str(int(x))` - parse once or validate input format"
 metadata:
   weight: 5
@@ -105,7 +105,7 @@ rule:
 ---
 id: double-conversion-int-float
 language: python
-severity: warning
+severity: error
 message: "`int(float(x))` - parse directly or validate input (mis-handles `'1e2'`, `'1.5'`)"
 metadata:
   weight: 5
@@ -118,7 +118,7 @@ rule:
 ---
 id: verbose-string-concat-str
 language: python
-severity: warning
+severity: error
 message: "`str(x) + str(y)` - use `f'{x}{y}'`"
 metadata:
   weight: 5
@@ -128,7 +128,7 @@ rule:
 ---
 id: verbose-string-literal-plus-str
 language: python
-severity: warning
+severity: error
 message: "`'...' + str(x)` - use `f'...{x}'`"
 metadata:
   weight: 5
@@ -139,7 +139,7 @@ rule:
 ---
 id: manual-quote-strip
 language: python
-severity: info
+severity: error
 message: "`if s.startswith(q) and s.endswith(q): s[1:-1]` - use `ast.literal_eval(s)` or `s.strip(q)`"
 metadata:
   weight: 1
@@ -149,7 +149,7 @@ rule:
 ---
 id: manual-bool-str-parse
 language: python
-severity: info
+severity: error
 message: "`if s == 'true': ... elif s == 'false': ...` - use `{'true': True, 'false': False}[s]` or `json.loads(s)`"
 metadata:
   weight: 1
@@ -160,7 +160,7 @@ rule:
 ---
 id: manual-float-dot-check
 language: python
-severity: info
+severity: error
 message: "`if '.' in s: float(s)` - brittle; use `ast.literal_eval` or `try: float(s) except ValueError:`"
 metadata:
   weight: 1
@@ -170,7 +170,7 @@ rule:
 ---
 id: manual-line-continuation-join
 language: python
-severity: info
+severity: error
 message: "`line += ' ' + part` in loop - collect parts into a list then `' '.join(parts)`"
 metadata:
   weight: 1
@@ -180,7 +180,7 @@ rule:
 ---
 id: returncode-int-cast
 language: python
-severity: warning
+severity: error
 message: int(proc.returncode) - returncode is already int
 metadata:
   weight: 5
@@ -190,7 +190,7 @@ rule:
 ---
 id: suffix-slice-removesuffix
 language: python
-severity: warning
+severity: error
 message: "`s[:-len('literal')]` - use `s.removesuffix('literal')`"
 metadata:
   weight: 5

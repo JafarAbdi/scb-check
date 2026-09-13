@@ -1,7 +1,7 @@
 ---
 id: generic-with-any
 language: python
-severity: info
+severity: error
 message: "`<Container>[..., Any, ...]` - specify concrete element types or use a `TypedDict`/`@dataclass`/`Protocol`"
 metadata:
   weight: 1
@@ -30,7 +30,7 @@ constraints:
 ---
 id: union-with-any
 language: python
-severity: warning
+severity: error
 message: "`Union[..., Any]` / `... | Any` - drop `Any`, it subsumes every other member"
 metadata:
   weight: 5
@@ -59,7 +59,7 @@ constraints:
 ---
 id: optional-any
 language: python
-severity: warning
+severity: error
 message: "`Optional[Any]` / `Any | None` - reduces to `Any`; drop the wrapper"
 metadata:
   weight: 5
@@ -78,7 +78,7 @@ rule:
 ---
 id: callable-any-return
 language: python
-severity: info
+severity: error
 message: "`Callable[..., Any]` - specify the return type; `...` already erases the parameter signature"
 metadata:
   weight: 1
@@ -94,7 +94,7 @@ rule:
 ---
 id: object-type-annotation
 language: python
-severity: info
+severity: error
 message: "`object` annotation - use a concrete type, `Protocol`, or `Any`"
 metadata:
   weight: 1
@@ -109,7 +109,7 @@ rule:
 ---
 id: legacy-typing-capitalized-imports
 language: python
-severity: warning
+severity: error
 message: "Deprecated `typing` import - use built-ins (list/dict/tuple/set/type), `collections.*`, or `X | Y` / `X | None` (PEP 585/604)"
 metadata:
   weight: 5

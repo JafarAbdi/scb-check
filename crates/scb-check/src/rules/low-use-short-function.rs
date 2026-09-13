@@ -11,7 +11,7 @@ impl Violation for LowUseShortFunction {
     const FIX_AVAILABILITY: FixAvailability = FixAvailability::Sometimes;
     const METADATA: RuleMetadata = RuleMetadata {
         id: "low-use-short-function",
-        severity: "info",
+        severity: "error",
         target: "symbol",
         message: "Short low-use function can be inlined safely.",
     };

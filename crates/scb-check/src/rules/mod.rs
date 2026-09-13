@@ -415,7 +415,7 @@ fn route(value: &str) -> String {
             document,
             @r###"
 id: trivial-wrapper
-severity: warning
+severity: error
 target: symbol
 kind: structural
 message: Function adds no behavior.

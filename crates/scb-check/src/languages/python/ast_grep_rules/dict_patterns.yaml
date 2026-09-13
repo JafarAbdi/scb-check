@@ -1,7 +1,7 @@
 ---
 id: chained-dict-get
 language: python
-severity: info
+severity: error
 message: "`.get().get()` chain - extract helper or use `operator.itemgetter` / try-except KeyError"
 metadata:
   weight: 1
@@ -19,7 +19,7 @@ rule:
 ---
 id: repeated-dict-key-assignment
 language: python
-severity: info
+severity: error
 message: "Repeated `d[k] = f(...)` lines - use a loop or dict comprehension"
 metadata:
   weight: 1
@@ -37,7 +37,7 @@ rule:
 ---
 id: dict-get-zero-default
 language: python
-severity: info
+severity: error
 message: "`d.get(k, 0)` - use a defaultdict(int) instead or a try/except KeyError guard."
 metadata:
   weight: 1
@@ -58,7 +58,7 @@ rule:
 ---
 id: dict-get-empty-string-default
 language: python
-severity: info
+severity: error
 message: "`x = d.get(k, ''); if x:` - conflates missing key with empty value; use `.get(k)` and `is not None`"
 metadata:
   weight: 1
@@ -74,7 +74,7 @@ rule:
 ---
 id: dict-get-empty-list-default
 language: python
-severity: info
+severity: error
 message: "`d.get(k, [])` - builds a fresh list each call; use `d.setdefault(k, [])` or `defaultdict(list)`"
 metadata:
   weight: 1
@@ -100,7 +100,7 @@ rule:
 ---
 id: dict-get-empty-dict-default
 language: python
-severity: info
+severity: error
 message: "`d.get(k, {})` - builds a fresh dict each call; use `d.setdefault(k, {})` or `defaultdict(dict)`"
 metadata:
   weight: 1
@@ -123,7 +123,7 @@ rule:
 ---
 id: dict-get-default-none
 language: python
-severity: warning
+severity: error
 message: "`d.get(k, None)` - drop the `None`, it is already the default"
 metadata:
   weight: 5
@@ -143,7 +143,7 @@ rule:
 ---
 id: check-key-in-dict-keys
 language: python
-severity: warning
+severity: error
 message: "`k in d.keys()` - use `k in d`"
 metadata:
   weight: 5
@@ -159,7 +159,7 @@ rule:
 ---
 id: list-dict-keys
 language: python
-severity: warning
+severity: error
 message: "`list(d.keys())` - use `list(d)`"
 metadata:
   weight: 5
@@ -180,7 +180,7 @@ rule:
 ---
 id: manual-dict-setdefault
 language: python
-severity: info
+severity: error
 message: "`if k not in d: d[k] = v` - use `d.setdefault(k, v)`"
 metadata:
   weight: 1
@@ -194,7 +194,7 @@ rule:
 ---
 id: verbose-dict-key-access
 language: python
-severity: info
+severity: error
 message: "`if k in d: v = d[k]` - use `v = d.get(k)` (or `d.get(k, default)`)"
 metadata:
   weight: 1
@@ -205,7 +205,7 @@ rule:
 ---
 id: verbose-dict-update
 language: python
-severity: info
+severity: error
 message: "Single-statement `d[k] = v` loop - use `{k: v for ... in ...}` comprehension"
 metadata:
   weight: 1
@@ -227,7 +227,7 @@ rule:
 ---
 id: verbose-dict-elif-updates
 language: python
-severity: info
+severity: error
 message: "`d[k] = v` in each if/elif branch - use a dispatch `{cond: (k, v)}` or helper"
 metadata:
   weight: 1
@@ -238,7 +238,7 @@ rule:
 ---
 id: verbose-dict-iteration
 language: python
-severity: warning
+severity: error
 message: "`for k in d.keys()` - use `for k in d`"
 metadata:
   weight: 5
@@ -249,7 +249,7 @@ rule:
 ---
 id: items-unused-value
 language: python
-severity: warning
+severity: error
 message: "`for k, _ in d.items()` - use `for k in d`"
 metadata:
   weight: 5
@@ -260,7 +260,7 @@ rule:
 ---
 id: items-unused-key
 language: python
-severity: warning
+severity: error
 message: "`for _, v in d.items()` - use `for v in d.values()`"
 metadata:
   weight: 5
@@ -271,7 +271,7 @@ rule:
 ---
 id: manual-dict-get-assign
 language: python
-severity: warning
+severity: error
 message: "`if k in d: v = d[k] else: v = default` - use `v = d.get(k, default)`"
 metadata:
   weight: 5
@@ -281,7 +281,7 @@ rule:
 ---
 id: manual-dict-counter-if-else
 language: python
-severity: info
+severity: error
 message: "Manual dict counter - use `d[k] = d.get(k, 0) + 1` or `collections.Counter(iterable)`"
 metadata:
   weight: 1
@@ -293,7 +293,7 @@ rule:
 ---
 id: sorted-dict-keys-wrap
 language: python
-severity: warning
+severity: error
 message: "`sorted(d.keys())` - use `sorted(d)`"
 metadata:
   weight: 5
@@ -303,7 +303,7 @@ rule:
 ---
 id: sorted-key-indexed-dict-comprehension
 language: python
-severity: warning
+severity: error
 message: "`{k: d[k] for k in sorted(d.keys())}` - use `dict(sorted(d.items()))`"
 metadata:
   weight: 5
@@ -315,7 +315,7 @@ rule:
 ---
 id: dict-comprehension-from-keys
 language: python
-severity: info
+severity: error
 message: "`dict.fromkeys(keys, val)` - use `{k: val for k in keys}` (and never with a mutable `val`, it is shared)"
 metadata:
   weight: 1
@@ -326,7 +326,7 @@ rule:
 ---
 id: dict-get-default-inside-keyerror-try
 language: python
-severity: warning
+severity: error
 message: "`d.get(k, default)` inside `try/except KeyError` - the default is unreachable; drop it or drop the except"
 metadata:
   weight: 5
@@ -344,7 +344,7 @@ rule:
 ---
 id: deep-dict-access
 language: python
-severity: info
+severity: error
 message: "4+ levels of `d[a][b][c][d]` - use a dataclass or `operator.itemgetter`"
 metadata:
   weight: 1
@@ -360,7 +360,7 @@ rule:
 ---
 id: get-then-none-check
 language: python
-severity: info
+severity: error
 message: "`v = d.get(k); if v is None:` - use `if k in d:` or try/except KeyError"
 metadata:
   weight: 1
@@ -379,7 +379,7 @@ rule:
 ---
 id: init-populate-iterate-dict
 language: python
-severity: info
+severity: error
 message: "Create-populate-iterate `$DICT` - use `{k: v for ...}` or skip the intermediate dict"
 note: 'Consider refactoring to:
 
@@ -433,7 +433,7 @@ constraints:
 ---
 id: sorted-items-default-key
 language: python
-severity: warning
+severity: error
 message: "sorted(..., key=lambda i: i[0]) / `(i[0], i[1])` - default sort already matches; drop the key"
 metadata:
   weight: 5
@@ -446,7 +446,7 @@ rule:
 ---
 id: identity-dict-comprehension
 language: python
-severity: warning
+severity: error
 message: "{k: v for k, v in d.items()} is just dict(d)"
 metadata:
   weight: 5
@@ -456,7 +456,7 @@ rule:
 ---
 id: dict-from-pairs-loop
 language: python
-severity: warning
+severity: error
 message: "`for k, v in pairs: d[k] = v` - use `d = dict(pairs)` (or `d.update(pairs)` if merging)"
 metadata:
   weight: 5
@@ -468,7 +468,7 @@ rule:
 ---
 id: update-if-present-dict
 language: python
-severity: info
+severity: error
 message: "`if x is not None: updates[k] = x` for each arg - drop the optional defaulting or pass `**kwargs` through"
 metadata:
   weight: 1

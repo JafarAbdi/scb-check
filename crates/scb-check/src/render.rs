@@ -428,10 +428,10 @@ def noisy(items):
         let rendered = render_human(&report, None, 1);
 
         let structural_index = rendered
-            .find("trivial-wrapper[warning]")
+            .find("trivial-wrapper[error]")
             .expect("structural finding should render");
         let ast_index = rendered
-            .find("warning[for-range-len]")
+            .find("error[for-range-len]")
             .expect("ast-grep finding should render");
         assert!(structural_index < ast_index);
         assert!(rendered.contains("1 | def _identity(value):"));

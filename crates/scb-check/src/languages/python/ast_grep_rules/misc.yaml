@@ -1,7 +1,7 @@
 ---
 id: pointless-lambda-call
 language: python
-severity: warning
+severity: error
 message: "Immediately-invoked lambda `(lambda: ...)()` - inline the expression"
 metadata:
   weight: 5
@@ -15,7 +15,7 @@ rule:
 ---
 id: unnecessary-lambda
 language: python
-severity: warning
+severity: error
 message: "`lambda x: f(x)` - pass `f` directly"
 metadata:
   weight: 5
@@ -26,7 +26,7 @@ rule:
 ---
 id: empty-init
 language: python
-severity: warning
+severity: error
 message: "Empty `__init__` - delete it, Python provides a default constructor"
 metadata:
   weight: 5
@@ -44,7 +44,7 @@ rule:
 ---
 id: redundant-return-none
 language: python
-severity: info
+severity: error
 message: "`return None` at end of function - drop it, `None` returns implicitly"
 metadata:
   weight: 1
@@ -71,7 +71,7 @@ rule:
 ---
 id: swallow-exception-pass-multi-stmt
 language: python
-severity: warning
+severity: error
 message: "`except ...: pass` after multi-step work hides real failures; catch specific errors or log"
 metadata:
   weight: 5
@@ -102,7 +102,7 @@ rule:
 ---
 id: tokenizer-char-append-branch
 language: python
-severity: info
+severity: error
 message: "Per-char tokenizer branches with `append` + `pos += 1` - use `{char: TokenType}` lookup table"
 metadata:
   weight: 1
@@ -118,7 +118,7 @@ rule:
 ---
 id: except-bare-reraise
 language: python
-severity: warning
+severity: error
 message: Catching an exception only to re-raise it adds noise; drop the try/except
 metadata:
   weight: 5
@@ -131,7 +131,7 @@ rule:
 ---
 id: except-pass-silence
 language: python
-severity: warning
+severity: error
 message: except clause with bare pass silently swallows errors
 metadata:
   weight: 5
@@ -145,7 +145,7 @@ rule:
 ---
 id: except-oserror-ioerror-pair
 language: python
-severity: warning
+severity: error
 message: IOError is an alias for OSError since Py3.3; drop the pair
 metadata:
   weight: 5
@@ -156,7 +156,7 @@ rule:
 ---
 id: pragma-no-cover-defensive
 language: python
-severity: info
+severity: error
 message: pragma no cover suppresses coverage on dead branches; remove the branch instead
 metadata:
   weight: 1
@@ -167,7 +167,7 @@ rule:
 ---
 id: per-method-assert-not-none
 language: python
-severity: info
+severity: error
 message: assert self.X is not None at method entry - enforce in __init__ once
 metadata:
   weight: 1
@@ -178,7 +178,7 @@ rule:
 ---
 id: del-unused-param
 language: python
-severity: warning
+severity: error
 message: del on a named parameter inside a function silences unused-param lint - drop from signature
 metadata:
   weight: 5
@@ -197,7 +197,7 @@ rule:
 ---
 id: wrapper-isvalid-oneliner
 language: python
-severity: info
+severity: error
 message: One-line is_valid_X wrapping a regex match/search/fullmatch adds no value
 metadata:
   weight: 1
@@ -216,7 +216,7 @@ rule:
 ---
 id: manual-removeprefix-replace
 language: python
-severity: warning
+severity: error
 message: s.replace(p, '') if s.startswith(p) else s - use str.removeprefix
 metadata:
   weight: 5
@@ -226,7 +226,7 @@ rule:
 ---
 id: section-banner-comment
 language: python
-severity: info
+severity: error
 message: Decorative section banner comment - delete, let structure speak for itself
 metadata:
   weight: 1
@@ -237,7 +237,7 @@ rule:
 ---
 id: dataclass-count-explosion
 language: python
-severity: info
+severity: error
 message: "@dataclass decorator - 10+ in one file suggests TypedDict or consolidation target"
 metadata:
   weight: 1
@@ -249,7 +249,7 @@ rule:
 ---
 id: dataclass-few-attributes
 language: python
-severity: info
+severity: error
 message: "@dataclass with <=2 scalar attributes - use a NamedTuple or tuple unless you need mutability"
 metadata:
   weight: 1
@@ -277,7 +277,7 @@ rule:
 ---
 id: dataclass-tagged-union-discriminator
 language: python
-severity: info
+severity: error
 message: "@dataclass with `kind: str` + multiple Optional fields - model as distinct types or a Literal discriminator"
 metadata:
   weight: 1
@@ -316,7 +316,7 @@ constraints:
 ---
 id: empty-exception-subclass
 language: python
-severity: info
+severity: error
 message: "Empty Error/Exception/Warning subclass - use one base error and pass context in the message"
 metadata:
   weight: 1
@@ -340,7 +340,7 @@ rule:
 ---
 id: identity-wrapper-function
 language: python
-severity: info
+severity: error
 message: "`def f(x): return g(x)` - identity wrapper adds no value; call the inner function directly"
 metadata:
   weight: 1
@@ -366,7 +366,7 @@ rule:
 ---
 id: predicate-isinstance-wrapper
 language: python
-severity: info
+severity: error
 message: "`def is_X(v) -> bool: return isinstance(v, T)` - inline the isinstance check; the wrapper adds no value"
 metadata:
   weight: 1
@@ -382,7 +382,7 @@ rule:
 ---
 id: lambda-generator-throw
 language: python
-severity: warning
+severity: error
 message: "`(_ for _ in ()).throw(...)` - raise inside a lambda via generator hack; use `def helper(): raise ...`"
 metadata:
   weight: 5
@@ -392,7 +392,7 @@ rule:
 ---
 id: oswalk-relpath-sep-replace
 language: python
-severity: info
+severity: error
 message: "`os.walk` + `os.path.relpath` + `.replace(os.sep, '/')` - use `Path(root).rglob('*')` and `.relative_to(root).as_posix()`"
 metadata:
   weight: 1

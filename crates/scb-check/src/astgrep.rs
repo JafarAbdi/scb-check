@@ -303,7 +303,7 @@ const fn severity_text(severity: &Severity) -> &'static str {
     match severity {
         Severity::Hint | Severity::Info => "info",
         Severity::Warning | Severity::Off => "warning",
-        Severity::Error => "critical",
+        Severity::Error => "error",
     }
 }
 

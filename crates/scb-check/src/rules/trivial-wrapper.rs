@@ -9,7 +9,7 @@ impl Violation for TrivialWrapper {
     const FIX_AVAILABILITY: FixAvailability = FixAvailability::Always;
     const METADATA: RuleMetadata = RuleMetadata {
         id: "trivial-wrapper",
-        severity: "warning",
+        severity: "error",
         target: "symbol",
         message: "Function adds no behavior.",
     };

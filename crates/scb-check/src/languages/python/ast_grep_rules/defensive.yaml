@@ -1,7 +1,7 @@
 ---
 id: defensive-fstring-raise-heavy
 language: python
-severity: info
+severity: error
 message: "Function body has 3+ `raise ...(f'...{var}...')` statements; dense per-field validation belongs at the boundary, not in a helper."
 metadata:
   weight: 1
@@ -13,7 +13,7 @@ rule:
 ---
 id: defensive-isinstance-raise-heavy
 language: python
-severity: info
+severity: error
 message: "Function body runs 3+ `if not isinstance(...): raise` checks; these are boundary validations leaking into core logic."
 metadata:
   weight: 1
@@ -25,7 +25,7 @@ rule:
 ---
 id: defensive-none-return-heavy
 language: python
-severity: info
+severity: error
 message: "Function body has 3+ `if … is None: return None` / `if not …: return None` guards; plumbing `None` through helpers is defensive slop."
 metadata:
   weight: 1
@@ -37,7 +37,7 @@ rule:
 ---
 id: defensive-try-soup-function
 language: python
-severity: info
+severity: error
 message: "Function body has 3+ `try/except` blocks — that is error-handling-as-control-flow. Rethink the contract or split the function."
 metadata:
   weight: 1
@@ -49,7 +49,7 @@ rule:
 ---
 id: defensive-except-exception-heavy
 language: python
-severity: info
+severity: error
 message: "Function body has 2+ `except Exception:` / bare `except:` clauses; catching-everything multiple times in one function is a paranoia smell."
 metadata:
   weight: 1
@@ -61,7 +61,7 @@ rule:
 ---
 id: defensive-validator-function
 language: python
-severity: info
+severity: error
 message: "Function body runs `if not isinstance(...): raise …` plus returns; this is a boundary validator living inside core logic. Validate once at the entrypoint, not per helper."
 metadata:
   weight: 1
@@ -96,7 +96,7 @@ rule:
 ---
 id: defensive-validator-returnmix
 language: python
-severity: info
+severity: error
 message: "Function combines `isinstance` guards with `is None` guards and returns; stop per-field validation — assert the contract at the boundary."
 metadata:
   weight: 1
@@ -134,7 +134,7 @@ rule:
 ---
 id: defensive-function-isinstance-heavy
 language: python
-severity: info
+severity: error
 message: "Function has 2+ `isinstance` checks in its body; inline type-policing is defensive slop. Validate at the boundary, then trust the type."
 metadata:
   weight: 1
@@ -185,7 +185,7 @@ rule:
 ---
 id: defensive-function-nullable-heavy
 language: python
-severity: info
+severity: error
 message: "Function has 2+ `if … is None: return/raise` guards threaded through its body; normalize nullability at the boundary, don't plumb `None`."
 metadata:
   weight: 1
@@ -230,7 +230,7 @@ rule:
 ---
 id: type-probe-ladder
 language: python
-severity: info
+severity: error
 message: "Two `if isinstance(same_var, T): …` branches back-to-back are a type-probe ladder; use a dispatch table or polymorphism."
 metadata:
   weight: 1
@@ -250,7 +250,7 @@ rule:
 ---
 id: multi-none-or-chain
 language: python
-severity: info
+severity: error
 message: "`if a is None or b is None [or c is None]: return/raise/continue` is defensive multi-arg null policing; normalize nullability at the boundary."
 metadata:
   weight: 1
@@ -271,7 +271,7 @@ rule:
 ---
 id: isinstance-guard-raise
 language: python
-severity: info
+severity: error
 message: "Inline `if not isinstance(x, T): raise …` guards police caller types in core logic; validate at the boundary and trust the type."
 metadata:
   weight: 1
@@ -289,7 +289,7 @@ rule:
 ---
 id: isinstance-return-constructor
 language: python
-severity: info
+severity: error
 message: "`if isinstance(x, T): return T(x)` re-wraps a value already of the target type; drop the guard and the wrap."
 metadata:
   weight: 1
@@ -306,7 +306,7 @@ rule:
 ---
 id: wrap-raise-fstring
 language: python
-severity: info
+severity: error
 message: "`except X as e: raise MyError(f'…: {e}') from e` renames exceptions for cosmetics; let the original propagate or catch something specific."
 metadata:
   weight: 1
@@ -337,7 +337,7 @@ rule:
 ---
 id: except-return-static-sentinel
 language: python
-severity: warning
+severity: error
 message: "`except Exception: return None/False/[]/{}` is bare-exception-to-sentinel; catch something specific or let it propagate."
 metadata:
   weight: 6
@@ -367,7 +367,7 @@ rule:
 ---
 id: triple-attr-none-default-chain
 language: python
-severity: info
+severity: error
 message: "`x = data.get(k, d1) or d2` double-guards a `.get` miss; pick one default path."
 metadata:
   weight: 1
@@ -383,7 +383,7 @@ rule:
 ---
 id: redundant-coerce-to-str
 language: python
-severity: info
+severity: error
 message: "`str(x) if x is not None else ''` coerces a typed value; trust the annotation."
 metadata:
   weight: 1
@@ -399,7 +399,7 @@ rule:
 ---
 id: none-continue-in-loop
 language: python
-severity: info
+severity: error
 message: "`if x is None: continue` inside a loop is defensive null-skipping; filter at the source or raise on contract violation."
 metadata:
   weight: 1
@@ -418,7 +418,7 @@ rule:
 ---
 id: parse-and-fallback-exception
 language: python
-severity: warning
+severity: error
 message: "`try: return int/float/json.loads(x) except Exception: return <default>` parse-with-silent-fallback swallows format errors."
 metadata:
   weight: 6
@@ -446,7 +446,7 @@ rule:
 ---
 id: return-none-guard-ladder
 language: python
-severity: info
+severity: error
 message: "Back-to-back `if …: return None` guard clauses treat Optional as a pervasive escape hatch; normalize nullability at the boundary."
 metadata:
   weight: 1
@@ -491,7 +491,7 @@ rule:
 ---
 id: raise-guard-ladder
 language: python
-severity: info
+severity: error
 message: "Back-to-back `if <cond>: raise ...` guard clauses that raise different error messages are defensive input policing; push validation to the boundary."
 metadata:
   weight: 1
@@ -534,7 +534,7 @@ rule:
 ---
 id: function-with-many-type-guards
 language: python
-severity: info
+severity: error
 message: "Function has 3+ `if not isinstance / if x is None: raise` guard clauses before doing work; validate at the boundary and trust the type downstream."
 metadata:
   weight: 1
@@ -569,7 +569,7 @@ rule:
 ---
 id: sentinel-fallback-function
 language: python
-severity: warning
+severity: error
 message: "Whole-function `try: <work>; except Exception: return None/False/[]/{}` swallows every error and returns a sentinel; catch specifically or let it propagate."
 metadata:
   weight: 6
@@ -618,7 +618,7 @@ rule:
 ---
 id: dispatch-by-string-equality
 language: python
-severity: info
+severity: error
 message: "Long `if op == \"X\":` / `elif op == \"Y\":` string-equality dispatch is open-coded command routing; use a `{name: handler}` table."
 metadata:
   weight: 1
@@ -639,7 +639,7 @@ rule:
 ---
 id: go-style-err-tuple-return
 language: python
-severity: info
+severity: error
 message: "`return None, error_msg` / `return None, None` Go-style dual-return open-codes an ad-hoc result type; raise exceptions or use a real result object."
 metadata:
   weight: 1
@@ -660,7 +660,7 @@ rule:
 ---
 id: len-arity-raise
 language: python
-severity: info
+severity: error
 message: "`if len(args) != N: raise …` open-codes arity checks; bind via parameters or `*args` unpacking so the error is structural."
 metadata:
   weight: 1
