@@ -42,12 +42,15 @@ scb-check check PATH -v / --verbosity   # add info logging
 scb-check check PATH -vv                # add debug logging
 scb-check check PATH --config FILE      # explicit config path
 scb-check check PATH --include-all      # include gitignored files plus ignored, informational, and boundary-suppressed findings
+scb-check check PATH --scope tracked   # scan only Git-tracked files (used by the pre-commit hook)
 scb-check check PATH --disable-sg  # skip ast-grep findings
 scb-check check PATH --min-duplicate-lines N  # show duplicate groups with at least N SLOC lines
 scb-check rule RULE_ID                  # print YAML or metadata for a specific rule
 ```
 
 `PATH` may be a file or directory. Supported source files are Python (`.py`, `.pyw`) and Rust (`.rs`). Directory discovery respects `.gitignore` globs by default; use `--include-all` to scan gitignored supported files too.
+
+The pre-commit hook uses `--scope tracked`: it reads working-tree contents of all Git-tracked sources under `PATH`, including newly staged files, but skips untracked files, deleted files, and symlinks. Configured exclusions and built-in directory exclusions still apply. Tracked files remain eligible even if `.gitignore` matches them; `--include-all` never adds untracked files in this mode. Git is required, and an empty tracked source set succeeds without output. Normal directory scans are unchanged.
 
 ### JSON report fields
 
@@ -118,7 +121,7 @@ The bundled rules include the checks from [anti-slop-py v0.1.0](https://github.c
 
 All five checks block commits, including banners that only warned in `anti-slop-py`. They do not automatically fix code. Use `disable-rules` to turn off a check, or the source directives below for justified exceptions in code. Banner comments can be excluded by disabling `section-banner-comment`; source ignores target code lines, not standalone comments.
 
-When replacing `anti-slop-py`, change `# ast-grep-ignore: RULE-ID` comments to `# scbc ignore[RULE-ID]`. The `scb-check` hook scans the repository, not just changed filenames. The adapted rules retain their [MIT notice](crates/scb-check/src/languages/python/ast_grep_rules/house.yaml).
+When replacing `anti-slop-py`, change `# ast-grep-ignore: RULE-ID` comments to `# scbc ignore[RULE-ID]`. The `scb-check` hook scans all tracked sources in the repository, not just changed filenames. The adapted rules retain their [MIT notice](crates/scb-check/src/languages/python/ast_grep_rules/house.yaml).
 
 ## Source directives
 

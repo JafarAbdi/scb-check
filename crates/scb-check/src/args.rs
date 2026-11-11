@@ -7,11 +7,22 @@ pub struct CheckOptions {
     pub path: PathBuf,
     pub output_json: bool,
     pub include_all: bool,
+    pub scope: ScanScope,
     pub disable_sg: bool,
     pub min_duplicate_lines: Option<usize>,
     pub config_path: Option<PathBuf>,
     pub verbosity: u8,
     pub gate: GateScope,
+}
+
+/// Which source files are eligible for analysis.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, ValueEnum, Default)]
+pub enum ScanScope {
+    /// Scan supported files on disk, respecting ignore rules.
+    #[default]
+    Directory,
+    /// Scan existing Git-tracked files, respecting configured exclusions.
+    Tracked,
 }
 
 /// Which finding categories make `check` exit non-zero.
@@ -59,6 +70,8 @@ struct RawCheckOptions {
     output_format: Option<OutputFormat>,
     #[arg(long = "include-all")]
     include_all: bool,
+    #[arg(long, value_enum, default_value_t = ScanScope::Directory)]
+    scope: ScanScope,
     #[arg(long = "disable-sg")]
     disable_sg: bool,
     #[arg(long = "config")]
@@ -120,6 +133,7 @@ impl From<RawCheckOptions> for CheckOptions {
             path: raw.path,
             output_json: raw.report || raw.output_format == Some(OutputFormat::Json),
             include_all: raw.include_all,
+            scope: raw.scope,
             disable_sg: raw.disable_sg,
             min_duplicate_lines: raw.min_duplicate_lines,
             config_path: raw.config_path,

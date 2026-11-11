@@ -13,7 +13,7 @@ The Python package is only a wheel delivery vehicle for `uvx`; wheels install th
 
 Implemented analysis paths:
 
-- Source discovery for supported languages: Python (`.py`, `.pyw`) and Rust (`.rs`).
+- Source discovery for Python (`.py`, `.pyw`) and Rust (`.rs`), through directory walking or `--scope tracked` using Git's index. The pre-commit hook selects tracked sources; see [usage](../README.md#usage).
 - Tree-sitter parsing into shared function, import/use binding, call-site, `CallGraph`, SLOC, complexity, comment, and clone facts.
 - Parser-derived `SLOC` accounting shared by verbosity, clone line counts, structural spans, and erosion mass.
 - Duplicate-structure detection by normalized parser-body hashing for Python and Rust.
@@ -27,7 +27,7 @@ Implemented analysis paths:
 
 - Exit `0` means the run completed without findings.
 - Exit `1` means the run completed and reported findings.
-- Exit `2` is for user-facing failures such as bad config, bad paths, unknown rules, invalid directives, or no discoverable supported source files.
+- Exit `2` is for user-facing failures such as bad config, bad paths, unknown rules, invalid directives, Git discovery failures, or no discoverable supported source files in directory mode. An empty tracked source set succeeds without output.
 - Individual parse failures warn and skip the file instead of aborting the run.
 - Languages without an ast-grep capability skip bundled ast-grep rules. Source directives use language-adapter comment normalization.
 - Config discovery and source-directive behavior are user-facing; keep README examples synchronized when they change.

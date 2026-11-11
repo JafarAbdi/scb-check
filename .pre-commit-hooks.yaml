@@ -5,4 +5,4 @@
   language: python
   pass_filenames: false
   always_run: true
-  args: ["--gate", "findings", "."]
+  args: ["--gate", "findings", "--scope", "tracked", "."]

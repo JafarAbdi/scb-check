@@ -1,6 +1,6 @@
 [package]
 name = "scb-check"
-version = "0.2.1"
+version = "0.2.2"
 edition = "2024"
 description = "Rust CLI backend for scb-check source-code verbosity and erosion reports"
 license = "MIT"

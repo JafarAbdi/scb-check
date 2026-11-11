@@ -1,4 +1,7 @@
+use std::ffi::OsStr;
+use std::os::unix::ffi::OsStrExt;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use globset::{Glob, GlobSet, GlobSetBuilder};
 use ignore::{DirEntry, WalkBuilder};
@@ -37,6 +40,13 @@ pub enum WalkError {
         #[source]
         source: std::io::Error,
     },
+    #[error("failed to list Git-tracked files: {source}")]
+    GitCommand {
+        #[source]
+        source: std::io::Error,
+    },
+    #[error("failed to list Git-tracked files: {message}")]
+    Git { message: String },
     #[error("failed to walk sources: {source}")]
     Walk {
         #[source]
@@ -82,6 +92,52 @@ pub fn discover_sources(
         push_source_entry(entry.path(), config, &exclude_set, &mut files)?;
     }
     files.sort_by(|left, right| left.path.cmp(&right.path));
+    Ok(files)
+}
+
+/// Discover existing Git-tracked sources without including untracked working-tree files.
+pub fn discover_tracked_sources(
+    path: &Path,
+    config: &Config,
+) -> Result<Vec<SourceFile>, WalkError> {
+    let path = absolute(path)?;
+    let (root, pathspec) = if path.is_file() {
+        (
+            path.parent().expect("an absolute file has a parent"),
+            path.file_name().expect("a file has a name"),
+        )
+    } else {
+        (path.as_path(), OsStr::new("."))
+    };
+    let output = Command::new("git")
+        .current_dir(root)
+        .args(["--literal-pathspecs", "ls-files", "--cached", "-z", "--"])
+        .arg(pathspec)
+        .output()
+        .map_err(|source| WalkError::GitCommand { source })?;
+    if !output.status.success() {
+        return Err(WalkError::Git {
+            message: String::from_utf8_lossy(&output.stderr).trim().to_string(),
+        });
+    }
+    let exclude_set = user_exclude_set(&config.exclude)?;
+    let mut files = Vec::new();
+    for name in output
+        .stdout
+        .split(|byte| *byte == 0)
+        .filter(|name| !name.is_empty())
+    {
+        let relative = Path::new(OsStr::from_bytes(name));
+        let file = root.join(relative);
+        if file.is_file()
+            && !file.is_symlink()
+            && relative.ancestors().all(is_default_discoverable_path)
+        {
+            push_source_entry(&file, config, &exclude_set, &mut files)?;
+        }
+    }
+    files.sort_by(|left, right| left.path.cmp(&right.path));
+    files.dedup_by(|left, right| left.path == right.path);
     Ok(files)
 }
 

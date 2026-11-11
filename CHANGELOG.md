@@ -2,6 +2,13 @@
 
 All notable user-facing changes to `scb-check` are documented here.
 
+## 0.2.2
+
+- Make the pre-commit hook scan all tracked sources instead of all files on disk,
+  excluding untracked scratch scripts while retaining cross-file analysis.
+- Add `--scope tracked`; keep normal directory scans unchanged. Git discovery
+  failures exit `2`, and an empty tracked source set succeeds without output.
+
 ## 0.2.1
 
 - Bundle `explicit-dtype`, `no-reflection`, `no-import-fallback`, and

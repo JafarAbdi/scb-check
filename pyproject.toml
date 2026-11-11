@@ -7,13 +7,13 @@ build-backend = "setuptools.build_meta"
 # release (built from packaging/). The actual CLI lives in crates/scb-check.
 [project]
 name = "scb-check-hook"
-version = "0.2.1"
+version = "0.2.2"
 description = "pre-commit hook wrapping the scb-check static musl binary."
 readme = "README.md"
 license = "Apache-2.0"
 requires-python = ">=3.8"
 dependencies = [
-    "scb-check @ https://github.com/JafarAbdi/scb-check/releases/download/v0.2.1/scb_check-0.2.1-py3-none-manylinux2014_x86_64.whl",
+    "scb-check @ https://github.com/JafarAbdi/scb-check/releases/download/v0.2.2/scb_check-0.2.2-py3-none-manylinux2014_x86_64.whl",
 ]
 
 [project.urls]

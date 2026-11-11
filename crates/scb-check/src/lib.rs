@@ -15,14 +15,14 @@ mod walk;
 use std::process::ExitCode;
 
 use analyze::{AnalyzeError, analyze};
-use args::{CheckOptions, Command, GateScope, ParseArgsError, parse_args};
+use args::{CheckOptions, Command, GateScope, ParseArgsError, ScanScope, parse_args};
 use astgrep::{AstGrepError, ast_grep_rule_document};
 use config::{ConfigError, load_config};
 use model::Report;
 use render::{render_human, render_json};
 use rules::structural_rule_document;
 use thiserror::Error;
-use walk::{WalkError, discover_sources};
+use walk::{WalkError, discover_sources, discover_tracked_sources};
 
 #[derive(Debug, Error)]
 enum CliError {
@@ -101,7 +101,10 @@ fn run_check(options: &CheckOptions) -> Result<ExitCode, CliError> {
             config.low_use_short_function.enabled
         ),
     );
-    let files = discover_sources(&options.path, &config, options.include_all)?;
+    let files = match options.scope {
+        ScanScope::Tracked => discover_tracked_sources(&options.path, &config)?,
+        ScanScope::Directory => discover_sources(&options.path, &config, options.include_all)?,
+    };
     log_info(
         options.verbosity,
         format_args!(
@@ -121,6 +124,9 @@ fn run_check(options: &CheckOptions) -> Result<ExitCode, CliError> {
         );
     }
     if files.is_empty() {
+        if options.scope == ScanScope::Tracked {
+            return Ok(ExitCode::SUCCESS);
+        }
         return Err(CliError::NoSourceFiles {
             path: options.path.clone(),
         });
