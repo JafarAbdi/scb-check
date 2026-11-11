@@ -239,15 +239,15 @@ wheels = [
 
 [[package]]
 name = "scb-check"
-version = "0.2.1"
-source = { url = "https://github.com/JafarAbdi/scb-check/releases/download/v0.2.1/scb_check-0.2.1-py3-none-manylinux2014_x86_64.whl" }
+version = "0.2.2"
+source = { url = "https://github.com/JafarAbdi/scb-check/releases/download/v0.2.2/scb_check-0.2.2-py3-none-manylinux2014_x86_64.whl" }
 wheels = [
-    { url = "https://github.com/JafarAbdi/scb-check/releases/download/v0.2.1/scb_check-0.2.1-py3-none-manylinux2014_x86_64.whl", hash = "sha256:fc5dc3f0a52e106ccb62ddf524fe054ab836dfc550094ed24490da7b0e9b7909" },
+    { url = "https://github.com/JafarAbdi/scb-check/releases/download/v0.2.2/scb_check-0.2.2-py3-none-manylinux2014_x86_64.whl", hash = "sha256:7046f9525e97f6bc7397b44f000f999b66fda580ebb9685371c8b28d126a8512" },
 ]
 
 [[package]]
 name = "scb-check-hook"
-version = "0.2.1"
+version = "0.2.2"
 source = { editable = "." }
 dependencies = [
     { name = "scb-check" },
@@ -266,7 +266,7 @@ dev = [
 dev = ">=3.10"
 
 [package.metadata]
-requires-dist = [{ name = "scb-check", url = "https://github.com/JafarAbdi/scb-check/releases/download/v0.2.1/scb_check-0.2.1-py3-none-manylinux2014_x86_64.whl" }]
+requires-dist = [{ name = "scb-check", url = "https://github.com/JafarAbdi/scb-check/releases/download/v0.2.2/scb_check-0.2.2-py3-none-manylinux2014_x86_64.whl" }]
 
 [package.metadata.requires-dev]
 dev = [
