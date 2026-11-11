@@ -30,6 +30,10 @@ const BUNDLED_RULES: &[(&str, &str)] = &[
         include_str!("languages/python/ast_grep_rules/loops_and_comprehensions.yaml"),
     ),
     (
+        "house.yaml",
+        include_str!("languages/python/ast_grep_rules/house.yaml"),
+    ),
+    (
         "misc.yaml",
         include_str!("languages/python/ast_grep_rules/misc.yaml"),
     ),
@@ -332,6 +336,113 @@ def item_names(items):
                 .iter()
                 .any(|finding| finding.rule_id == "for-range-len")
         );
+    }
+
+    const HOUSE_RULE_CASES: &[(&str, &[&str], &[&str])] = &[
+        (
+            "explicit-dtype",
+            &[
+                "np.zeros(3, dtype=np.float64)",
+                "np.ones(3, dtype=np.float64)",
+                "np.empty(3, dtype=np.float64)",
+                "np.array([1.0, 2.0], dtype=np.float64)",
+                "np.array([1, 2], dtype=np.float64)",
+                "torch.zeros(3, dtype=torch.float32)",
+                "torch.ones(3, dtype=torch.float32)",
+                "torch.tensor([1, 2], dtype=torch.float32)",
+                "torch.set_default_dtype(torch.float64)\ntorch.zeros(3, dtype=torch.float32)",
+            ],
+            &[
+                "np.zeros(3)",
+                "np.zeros(3, dtype=np.float32)",
+                "np.array(control_points, dtype=np.float64)",
+            ],
+        ),
+        (
+            "no-reflection",
+            &[
+                "getattr(error, 'dependency', None)",
+                "getattr(cv2.aruco, self.dictionary)",
+                "setattr(config, name, value)",
+                "if hasattr(module, 'qconfig'):\n    pass",
+                "delattr(obj, 'cache')",
+                "object.__setattr__(self, 'distortion', distortion)",
+                "obj.__delattr__('cache')",
+                "obj.__getattribute__('secret')",
+                "state = vars(config)",
+                "obj.__dict__['field'] = 1",
+                "handler = globals()[name]",
+                "handler = globals().get(name)",
+            ],
+            &["error.dependency", "print(sorted(globals))", "vars()"],
+        ),
+        (
+            "no-import-fallback",
+            &[
+                "try:\n    import tomllib\nexcept ImportError:\n    import tomli as tomllib",
+                "try:\n    from package import feature\nexcept ModuleNotFoundError:\n    feature = None",
+            ],
+            &[
+                "import tomllib",
+                "try:\n    serial = orbbec.Camera.get_serial(path)\nexcept (ValueError, ImportError):\n    pass",
+            ],
+        ),
+        (
+            "no-python-subprocess",
+            &[
+                "subprocess.run(['tool'])",
+                "subprocess.Popen(['tool'])",
+                "subprocess.call(['tool'])",
+                "subprocess.check_call(['tool'])",
+                "subprocess.check_output(['tool'])",
+                "subprocess.getoutput('tool')",
+                "subprocess.getstatusoutput('tool')",
+                "await asyncio.create_subprocess_exec('tool')",
+                "await asyncio.create_subprocess_shell('tool')",
+            ],
+            &[
+                "self._process: asyncio.subprocess.Process | None = None",
+                "subprocess.CompletedProcess(['tool'], 0)",
+                "raise subprocess.CalledProcessError(1, ['tool'])",
+                "raise subprocess.TimeoutExpired(['tool'], 5)",
+                "raise subprocess.SubprocessError('failed')",
+                "subprocess.list2cmdline(['tool', 'argument'])",
+            ],
+        ),
+        (
+            "section-banner-comment",
+            &[
+                "# ---- Helpers ----",
+                "# ============================",
+                "# *** Helpers",
+                "# ___ Helpers",
+                "# ~~~ Helpers",
+                "# ──────────",
+            ],
+            &["# Compute the residual.", "# --", "# ───"],
+        ),
+    ];
+    #[test]
+    fn house_rules_catch_selected_patterns_without_flagging_allowed_uses() {
+        let catalog = AstGrepCatalog::load().expect("catalog should load");
+        for &(rule_id, invalid, valid) in HOUSE_RULE_CASES {
+            assert!(catalog.rule_document(rule_id).is_some(), "{rule_id}");
+            for (sources, expected) in [(invalid, true), (valid, false)] {
+                for source in sources {
+                    let findings = catalog.run_rules(
+                        SupportLang::Python,
+                        std::path::Path::new("sample.py"),
+                        source,
+                        false,
+                    );
+                    assert_eq!(
+                        findings.iter().any(|finding| finding.rule_id == rule_id),
+                        expected,
+                        "{rule_id}: {source}",
+                    );
+                }
+            }
+        }
     }
 
     #[test]

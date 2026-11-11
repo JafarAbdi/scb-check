@@ -2,6 +2,14 @@
 
 All notable user-facing changes to `scb-check` are documented here.
 
+## 0.2.1
+
+- Bundle `explicit-dtype`, `no-reflection`, `no-import-fallback`, and
+  `no-python-subprocess` from `anti-slop-py` v0.1.0.
+- Extend `section-banner-comment` to catch short and titled decorative banners
+  without adding a duplicate rule. Banners remain errors, not warnings.
+- Test rule matching, commit failures, rule lookup, and source/config suppression.
+
 ## Fork changes (JafarAbdi/scb-check)
 
 This is a fork of gabeorlanski/scb-check (Apache-2.0). Modifications:

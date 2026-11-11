@@ -1,0 +1,86 @@
+# Adapted from JafarAbdi/anti-slop-py v0.1.0 under the MIT License.
+# Copyright (c) 2026 Jafar Uruc
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+id: explicit-dtype
+language: python
+severity: error
+message: Justify this dtype; omit it if unnecessary. Removing it may change behavior.
+note: "If required, keep the dtype, explain why, and suppress with `# scbc ignore[explicit-dtype]`."
+rule:
+  any:
+    - pattern: np.zeros($$$, dtype=np.float64)
+    - pattern: np.ones($$$, dtype=np.float64)
+    - pattern: np.empty($$$, dtype=np.float64)
+    - pattern: np.array([$$$], dtype=np.float64)
+    - pattern: torch.zeros($$$, dtype=torch.float32)
+    - pattern: torch.ones($$$, dtype=torch.float32)
+    - pattern: torch.tensor([$$$], dtype=torch.float32)
+---
+id: no-reflection
+language: python
+severity: error
+message: Reflection dodges the type checker; use direct attribute access or a typed variant.
+note: "For genuine metaprogramming, suppress with `# scbc ignore[no-reflection]`."
+rule:
+  any:
+    - pattern: getattr($$$)
+    - pattern: setattr($$$)
+    - pattern: hasattr($$$)
+    - pattern: delattr($$$)
+    - pattern: $OBJ.__setattr__($$$)
+    - pattern: $OBJ.__delattr__($$$)
+    - pattern: $OBJ.__getattribute__($$$)
+    - pattern: vars($OBJ)
+    - pattern: $OBJ.__dict__
+    - pattern: globals()[$KEY]
+    - pattern: globals().get($$$)
+---
+id: no-import-fallback
+language: python
+severity: error
+message: try/except ImportError fallback; declare the dependency and import at module level.
+rule:
+  all:
+    - kind: try_statement
+    - has:
+        any:
+          - kind: import_statement
+          - kind: import_from_statement
+        stopBy: end
+    - has:
+        kind: except_clause
+        regex: 'ImportError|ModuleNotFoundError'
+---
+id: no-python-subprocess
+language: python
+severity: error
+message: Process launch; import the module or justify with a scbc ignore comment.
+note: "For a necessary subprocess, suppress with `# scbc ignore[no-python-subprocess]`."
+rule:
+  any:
+    - pattern: subprocess.run($$$)
+    - pattern: subprocess.Popen($$$)
+    - pattern: subprocess.call($$$)
+    - pattern: subprocess.check_call($$$)
+    - pattern: subprocess.check_output($$$)
+    - pattern: subprocess.getoutput($$$)
+    - pattern: subprocess.getstatusoutput($$$)
+    - pattern: asyncio.create_subprocess_exec($$$)
+    - pattern: asyncio.create_subprocess_shell($$$)

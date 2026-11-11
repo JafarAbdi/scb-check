@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "scb-check"
-version = "0.2.0"
+version = "0.2.1"
 description = "Verbosity/erosion + slop-rule CLI, shipped as a static musl binary."
 readme = "README.md"
 license = "Apache-2.0"

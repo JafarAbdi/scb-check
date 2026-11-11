@@ -233,7 +233,7 @@ metadata:
   category: slop
 rule:
   kind: comment
-  regex: "^#\\s*[-=─]{10,}\\s*$"
+  regex: "^#\\s*([-=*_~]{3,}|[-=─]{10,}\\s*$)"
 ---
 id: dataclass-count-explosion
 language: python

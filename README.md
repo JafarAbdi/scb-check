@@ -106,6 +106,20 @@ When using `pyproject.toml`, scb-check also includes excludes from:
 - `[tool.ruff].extend-exclude`
 - `[tool.ty.src].exclude`
 
+## Python house rules
+
+The bundled rules include the checks from [anti-slop-py v0.1.0](https://github.com/JafarAbdi/anti-slop-py/tree/v0.1.0):
+
+- `explicit-dtype`: requires justification for selected explicit NumPy/PyTorch dtypes; removing a dtype can change behavior.
+- `no-reflection`: flags dynamic attribute access and dictionary-based object/global lookup.
+- `no-import-fallback`: flags imports wrapped in `ImportError` or `ModuleNotFoundError` fallbacks.
+- `no-python-subprocess`: flags process launches through `subprocess` and `asyncio`.
+- `section-banner-comment`: covers `anti-slop-py`'s `no-banner-comment` patterns and the existing long Unicode separators, without duplicate findings.
+
+All five checks block commits, including banners that only warned in `anti-slop-py`. They do not automatically fix code. Use `disable-rules` to turn off a check, or the source directives below for justified exceptions in code. Banner comments can be excluded by disabling `section-banner-comment`; source ignores target code lines, not standalone comments.
+
+When replacing `anti-slop-py`, change `# ast-grep-ignore: RULE-ID` comments to `# scbc ignore[RULE-ID]`. The `scb-check` hook scans the repository, not just changed filenames. The adapted rules retain their [MIT notice](crates/scb-check/src/languages/python/ast_grep_rules/house.yaml).
+
 ## Source directives
 
 In Python and Rust files, you can suppress specific ast-grep or structural rule findings at the source line level with:
